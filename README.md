@@ -80,6 +80,5 @@ Con el siguiente cuerpo JSON:
 }
 ```
 
-> ⚠️ Nota: Este archivo README.md está diseñado únicamente para la rama fase-2-autenticacion.
-
-💡 Consejo: Asegúrate de probar las funcionalidades de autenticación antes de fusionar esta rama con develop.
+> [!NOTE] Este archivo README.md está diseñado únicamente para la rama fase-2-autenticacion.
+> 💡 Consejo: Asegúrate de probar las funcionalidades de autenticación antes de fusionar esta rama con develop.
