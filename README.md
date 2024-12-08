@@ -37,7 +37,7 @@ Implementar un sistema de autenticación utilizando Firestore y JSON Web Tokens 
 Ejecuta:
 
 ```bash
-npm install bcrypt jsonwebtoken
+npm install bcrypt jsonwebtoken && npm install -D @types/bcrypt
 ```
 
 ### 2. Probar el Registro de Usuarios
