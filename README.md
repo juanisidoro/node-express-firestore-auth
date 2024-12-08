@@ -1,86 +1,33 @@
-# Fase 2: Sistema de Autenticación
+# Fase 2 - UI: Login, Registro y Dashboard
 
-**Objetivo**:  
-Implementar un sistema de autenticación utilizando Firestore y JSON Web Tokens (JWT), que permita registrar usuarios, iniciar sesión y renovar tokens.
+En esta rama, estamos trabajando en la implementación de una interfaz de usuario básica para las siguientes funcionalidades:
 
----
+## **Objetivo**
+Crear una interfaz simple para:
+- **Login**: Permitir a los usuarios autenticarse con su email y contraseña.
+- **Registro**: Permitir a nuevos usuarios registrarse con un rol específico.
+- **Dashboard**: Mostrar una página de bienvenida que varíe según el rol del usuario.
 
-## Características Implementadas
+## **Contenido**
+Las páginas implementadas en esta rama incluyen:
+1. **Login Page**:
+   - Formulario para que los usuarios inicien sesión.
+   - Validación básica de los campos requeridos.
+   - Manejo de errores genéricos (sin indicar si el error es por email o contraseña).
+2. **Registro Page**:
+   - Formulario para que los usuarios se registren.
+   - Selección de rol entre opciones permitidas (`admin`, `user`, etc.).
+3. **Dashboard Page**:
+   - Muestra un mensaje de bienvenida basado en el rol del usuario.
+   - Incluye un botón para cerrar sesión, que elimina el token de autenticación.
 
-1. **Registro de usuarios (`POST /auth/register`)**:
-   - Permite registrar nuevos usuarios almacenando credenciales cifradas en Firestore.
-   - Devuelve un Access Token y un Refresh Token.
-2. **Inicio de sesión (`POST /auth/login`)**:
-   - Valida las credenciales del usuario.
-   - Devuelve un Access Token y un Refresh Token.
-3. **Renovación de tokens (`POST /auth/refresh-token`)**:
-   - Permite obtener un nuevo Access Token utilizando un Refresh Token válido.
+## **Notas**
+- Este código es únicamente para pruebas y no será fusionado con `develop`.
+- Los cambios aquí realizados no interfieren con la lógica del backend en la rama `fase-2-autenticacion`.
+- Se usará el backend desarrollado en la fase 2 para manejar las solicitudes de login, registro y validación de tokens.
 
----
-
-## Pasos Realizados
-
-1. **Crear la estructura de archivos para autenticación**:
-   - Carpetas: `auth/controllers/`, `auth/services/`, `auth/routes/`.
-2. **Configurar Firestore para almacenar usuarios**:
-   - La colección `users` almacena el correo electrónico y la contraseña cifrada.
-3. **Implementar controladores para cada funcionalidad**:
-   - Registro, inicio de sesión y renovación de tokens.
-4. **Agregar rutas de autenticación en el servidor**:
-   - Prefijo `/auth` para las rutas relacionadas con la autenticación.
-
----
-
-## Cómo Usar esta Fase
-
-### 1. Instalar Dependencias
-Ejecuta:
-
-```bash
-npm install bcrypt jsonwebtoken && npm install -D @types/bcrypt
-```
-
-### 2. Probar el Registro de Usuarios
-Realiza una solicitud POST a:
-```bash
-http://localhost:3000/auth/register
-```
-
-Con el siguiente cuerpo JSON:
-```bash
-{
-  "email": "test@example.com",
-  "password": "password123"
-}
-```
-
-### 3. Probar el Inicio de Sesión
-Realiza una solicitud POST a:
-```bash
-http://localhost:3000/auth/login
-```
-
-```bash
-{
-  "email": "test@example.com",
-  "password": "password123"
-}
-```
-
-### 4. Probar la Renovación de Tokens
-Realiza una solicitud POST a:
-
-```bash
-http://localhost:3000/auth/refresh-token
-```
-Con el siguiente cuerpo JSON:
-```bash
-{
-  "refreshToken": "<your-refresh-token>"
-}
-```
-
-> [!NOTE] 
-> Este archivo README.md está diseñado únicamente para la rama fase-2-autenticacion.
->
-> 💡 Consejo: Asegúrate de probar las funcionalidades de autenticación antes de fusionar esta rama con develop.
+## **Pruebas**
+Para probar la UI:
+1. Levanta el servidor del backend en `fase-2-autenticacion`.
+2. Abre el archivo HTML localmente o configúralo con un servidor estático como `live-server` o similar.
+3. Asegúrate de que las funcionalidades de login y registro están conectadas al backend.
