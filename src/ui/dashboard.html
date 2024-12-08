@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>Dashboard</title>
+</head>
+<body>
+  <div id="loggedInContent" style="display: none;">
+    <h1>Welcome to the Dashboard</h1>
+    <div id="userInfo">
+      <p>Loading user info...</p>
+    </div>
+    <button id="logoutButton">Logout</button>
+  </div>
+
+  <div id="notLoggedInContent" style="display: none;">
+    <h1>Access Denied</h1>
+    <p>You are not logged in.</p>
+    <button id="loginButton">Go to Login</button>
+    <button id="registerButton">Go to Register</button>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
