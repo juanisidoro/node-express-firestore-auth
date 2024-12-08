@@ -89,8 +89,6 @@ npx ts-node src/testFirestore.ts
 
 Verifica que los datos de prueba se escriban en Firestore.
 
-Notas Importantes
-
 
 > **Nota Importante**: 
 Este README está diseñado para ser usado únicamente en la rama fase-1-configuracion.
