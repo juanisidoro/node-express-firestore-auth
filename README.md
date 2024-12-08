@@ -1,6 +1,6 @@
 # 🚀 Node.js Express Firestore Auth 🔐
 
-¡Bienvenido al proyecto **Node.js Express Firestore Auth**! Este repositorio contiene una plantilla para implementar un sistema de autenticación utilizando **Node.js**, **Express**, y **Firestore**. Ideal para iniciar rápidamente proyectos con autenticación segura y eficiente. 🌟
+¡¡Bienvenido al proyecto **Node.js Express Firestore Auth**!! Este repositorio contiene una plantilla para implementar un sistema de autenticación utilizando **Node.js**, **Express**, y **Firestore**. Ideal para iniciar rápidamente proyectos con autenticación segura y eficiente. 🌟
 
 ---
 
