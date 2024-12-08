@@ -3,25 +3,27 @@ import { userExists, createUser } from "../services/userService";
 import { generateAccessToken, generateRefreshToken } from "../services/tokenService";
 
 export const registerController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
 
-  if (!email || !password) {
-    res.status(400).json({ error: "Email and password are required" });
+  if (!email || !password || !role) {
+    res.status(400).send();
+    return;
   }
 
   try {
     if (await userExists(email)) {
-      res.status(400).json({ error: "User already exists" });
+      res.status(409).send(); // Error silencioso
+      return;
     }
 
-    await createUser(email, password);
+    await createUser(email, password, role);
 
     const accessToken = generateAccessToken(email);
-    const refreshToken = generateRefreshToken(email);
+    const refreshToken = await generateRefreshToken(email);
 
     res.status(201).json({ accessToken, refreshToken });
   } catch (error) {
-    console.error("Error during registration:", error);
-    next(error); // Pasar el error al middleware global
+    next(error);
   }
 };
+

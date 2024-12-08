@@ -1,10 +1,9 @@
 import db from "../../config/firestore";
 import bcrypt from "bcrypt";
+import { UserData } from "../../types/userTypes";
 
 /**
  * Comprueba si un usuario con el correo proporcionado ya existe en Firestore.
- * @param email - El correo electrónico del usuario.
- * @returns - `true` si el usuario existe, `false` si no existe.
  */
 export const userExists = async (email: string): Promise<boolean> => {
   const userRef = db.collection("users").doc(email);
@@ -13,29 +12,20 @@ export const userExists = async (email: string): Promise<boolean> => {
 };
 
 /**
- * Crea un nuevo usuario en Firestore con una contraseña cifrada.
- * @param email - El correo electrónico del usuario.
- * @param password - La contraseña del usuario (en texto plano).
- * @returns - Promesa que resuelve cuando el usuario ha sido creado.
+ * Crea un nuevo usuario en Firestore con un rol predeterminado.
  */
-export const createUser = async (email: string, password: string): Promise<void> => {
+export const createUser = async (email: string, password: string, role: string = "user"): Promise<void> => {
   const hashedPassword = await bcrypt.hash(password, 10);
   const userRef = db.collection("users").doc(email);
-  await userRef.set({ email, password: hashedPassword });
+  await userRef.set({ email, password: hashedPassword, role });
 };
 
 /**
- * Comprueba si la contraseña proporcionada coincide con la almacenada en Firestore.
- * @param email - El correo electrónico del usuario.
- * @param password - La contraseña proporcionada (en texto plano).
- * @returns - `true` si la contraseña coincide, `false` si no.
+ * Obtiene el rol de un usuario.
  */
-export const verifyPassword = async (email: string, password: string): Promise<boolean> => {
+export const getUserRole = async (email: string): Promise<string> => {
   const userRef = db.collection("users").doc(email);
   const userSnapshot = await userRef.get();
-  if (!userSnapshot.exists) {
-    throw new Error("User not found");
-  }
-  const userData = userSnapshot.data();
-  return await bcrypt.compare(password, userData?.password);
+  const userData = userSnapshot.data() as UserData;
+  return userData.role;
 };

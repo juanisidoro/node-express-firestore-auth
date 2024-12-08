@@ -5,16 +5,16 @@ export const refreshTokenController = async (req: Request, res: Response, next: 
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
-    res.status(400).json({ error: "Refresh token is required" });
+    res.status(400).send();
+    return;
   }
 
   try {
-    const email = verifyRefreshToken(refreshToken);
+    const email = await verifyRefreshToken(refreshToken);
     const accessToken = generateAccessToken(email);
 
     res.status(200).json({ accessToken });
   } catch (error) {
-    console.error("Error during token refresh:", error);
-    next(error); // Pasar el error al middleware global
+    res.status(403).send();
   }
 };
