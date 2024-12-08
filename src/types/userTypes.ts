@@ -1,7 +1,9 @@
+export type Role = "admin" | "user";
+
 export type UserData = {
   email: string;
   password: string;
-  role: string; // Rol del usuario, como "admin" o "user".
+  role: Role;
 };
 
 export const isValidUserData = (data: any): data is UserData => {
