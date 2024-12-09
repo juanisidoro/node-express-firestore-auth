@@ -9,8 +9,8 @@ import { Email } from "../../../domain/auth/value-objects/email.vo";
 export class JwtTokenService {
   constructor(private readonly tokenRepository: TokenRepository) {}
 
-  public generateAccessToken(email: string): string {
-    return jwt.sign({ email }, ENV.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+  public generateAccessToken(email: string, role: string): string {
+    return jwt.sign({ email, role }, ENV.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
   }
 
   public async generateRefreshToken(email: string): Promise<string> {

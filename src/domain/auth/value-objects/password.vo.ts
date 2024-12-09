@@ -20,8 +20,15 @@ export class InvalidPasswordError extends Error {
       return this.value;
     }
   
+    // Mantener private
     private static isValidPassword(password: string): boolean {
       return password.length >= 6;
     }
+  
+    // Nuevo método público
+    public static validate(password: string): boolean {
+      return this.isValidPassword(password);
+    }
   }
+  
   

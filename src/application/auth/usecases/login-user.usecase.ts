@@ -5,16 +5,15 @@ import { AuthTokensDTO } from "../dtos/token.dto";
 import { InvalidCredentialsError } from "../exceptions/invalid-credentials.exception";
 import { PasswordComparer } from "./usecase-interfaces";
 import { Email } from "../../../domain/auth/value-objects/email.vo";
+import { TokenService } from "./usecase-interfaces";
+
 
 export class LoginUserUseCase {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly tokenRepository: TokenRepository,
     private readonly passwordComparer: PasswordComparer,
-    private readonly tokenService: {
-      generateAccessToken(email: string): string;
-      generateRefreshToken(email: string): Promise<string>;
-    }
+    private readonly tokenService: TokenService
   ) {}
 
   public async execute(data: LoginUserDTO): Promise<AuthTokensDTO> {
@@ -39,7 +38,7 @@ export class LoginUserUseCase {
     const existingToken = await this.tokenRepository.getTokenByEmail(emailVO.getValue());
 
     if (existingToken) {
-      const accessToken = this.tokenService.generateAccessToken(emailVO.getValue());
+      const accessToken = this.tokenService.generateAccessToken(emailVO.getValue(), user.role.getValue());
       return {
         accessToken,
         refreshToken: existingToken.refreshToken,
@@ -47,7 +46,7 @@ export class LoginUserUseCase {
     }
 
     const refreshToken = await this.tokenService.generateRefreshToken(emailVO.getValue());
-    const accessToken = this.tokenService.generateAccessToken(emailVO.getValue());
+    const accessToken = this.tokenService.generateAccessToken(emailVO.getValue(), user.role.getValue());
     return { accessToken, refreshToken };
   }
 }

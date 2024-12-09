@@ -8,9 +8,9 @@ export interface PasswordHasher {
   }
   
   export interface TokenService {
-    generateAccessToken(email: string): string;
+    generateAccessToken(email: string, role: string): string; // Actualización aquí
     generateRefreshToken(email: string): Promise<string>;
-  }
+  }  
   
   export interface RefreshTokenVerifier {
     verifyRefreshToken(token: string): Promise<string>;

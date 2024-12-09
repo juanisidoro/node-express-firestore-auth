@@ -39,7 +39,7 @@ export class RegisterUserUseCase {
     const newUser = new User(emailVO, hashedPasswordVO, roleVO);
     await this.userRepository.createUser(newUser);
 
-    const accessToken = this.tokenService.generateAccessToken(emailVO.getValue());
+    const accessToken = this.tokenService.generateAccessToken(emailVO.getValue(), roleVO.getValue());
     const refreshToken = await this.tokenService.generateRefreshToken(emailVO.getValue());
 
     return { accessToken, refreshToken };
