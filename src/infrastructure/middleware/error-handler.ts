@@ -1,9 +1,8 @@
 // infrastructure/middleware/error-handler.ts
 import { Request, Response, NextFunction } from "express";
+import { handleError } from "./error-mapper";
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error("Error:", err.message || err);
-  res.status(err.status || 500).json({
-    error: err.message || "Internal server error",
-  });
+  console.error("Error:", err.message || err); // Log para debugging
+  handleError(err, res); // Delegar al mapeador de errores
 };

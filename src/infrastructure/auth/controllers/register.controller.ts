@@ -5,13 +5,12 @@ import { RegisterUserDTO } from "../../../application/auth/dtos/user.dto";
 
 export const registerController = (registerUserUseCase: RegisterUserUseCase) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const { email, password, role } = req.body as RegisterUserDTO;
-
     try {
+      const { email, password, role } = req.body as RegisterUserDTO;
       const tokens = await registerUserUseCase.execute({ email, password, role });
       res.status(201).json(tokens);
-    } catch (error: any) {
-      next(error);
+    } catch (error) {
+      next(error); // Pasar el error al middleware global
     }
   };
 };

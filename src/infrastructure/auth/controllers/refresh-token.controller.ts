@@ -5,12 +5,12 @@ import { RefreshTokenDTO } from "../../../application/auth/dtos/token.dto";
 
 export const refreshTokenController = (refreshTokenUseCase: RefreshTokenUseCase) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const { refreshToken } = req.body as RefreshTokenDTO;
     try {
+      const { refreshToken } = req.body as RefreshTokenDTO;
       const { accessToken } = await refreshTokenUseCase.execute({ refreshToken });
       res.status(200).json({ accessToken });
-    } catch (error: any) {
-      next(error);
+    } catch (error) {
+      next(error); // Pasar el error al middleware global
     }
   };
 };

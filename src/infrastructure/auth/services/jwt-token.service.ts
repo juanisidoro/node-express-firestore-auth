@@ -25,15 +25,28 @@ export class JwtRefreshTokenVerifier {
   constructor(private readonly tokenRepository: TokenRepository) {}
 
   public async verifyRefreshToken(token: string): Promise<string> {
-    const decoded = jwt.verify(token, refreshTokenSecret);
+    let decoded: string | JwtPayload;
+
+    try {
+      // Intentar verificar el token
+      decoded = jwt.verify(token, refreshTokenSecret);
+    } catch (error) {
+      // Si ocurre un error, lanzar una excepción genérica
+      throw new Error("Invalid refresh token");
+    }
+
+    // Validar que el token decodificado tiene un campo "email"
     if (typeof decoded === "object" && "email" in decoded) {
       const email = (decoded as JwtPayload).email as string;
+
+      // Verificar si el token coincide con el almacenado
       const storedToken = await this.tokenRepository.getTokenByEmail(email);
       if (storedToken && storedToken.refreshToken === token) {
         return email;
       }
     }
 
+    // Si no pasa las verificaciones, lanzar una excepción genérica
     throw new Error("Invalid token");
   }
 }

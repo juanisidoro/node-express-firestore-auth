@@ -16,7 +16,7 @@ export class RefreshTokenUseCase {
   public async execute(data: RefreshTokenDTO): Promise<{ accessToken: string }> {
     const { refreshToken } = data;
     if (!refreshToken) {
-      throw new Error("Refresh token is required");
+      throw new Error("Missing refresh token"); // Lanza un error genérico
     }
 
     const email = await this.refreshTokenVerifier.verifyRefreshToken(refreshToken);

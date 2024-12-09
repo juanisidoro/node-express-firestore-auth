@@ -5,12 +5,12 @@ import { LoginUserDTO } from "../../../application/auth/dtos/user.dto";
 
 export const loginController = (loginUserUseCase: LoginUserUseCase) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const { email, password } = req.body as LoginUserDTO;
     try {
+      const { email, password } = req.body as LoginUserDTO;
       const tokens = await loginUserUseCase.execute({ email, password });
       res.status(200).json(tokens);
-    } catch (error: any) {
-      next(error);
+    } catch (error) {
+      next(error); // Pasar el error al middleware global
     }
   };
 };
