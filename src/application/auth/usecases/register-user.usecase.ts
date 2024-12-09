@@ -4,15 +4,10 @@ import { RegisterUserDTO } from "../dtos/user.dto";
 import { AuthTokensDTO } from "../dtos/token.dto";
 import { User } from "../../../domain/auth/entities/user.entity";
 import { UserAlreadyExistsError } from "../exceptions/user-already-exists.exception";
-
-export interface PasswordHasher {
-  hash(password: string): Promise<string>;
-}
-
-export interface TokenService {
-  generateAccessToken(email: string): string;
-  generateRefreshToken(email: string): Promise<string>;
-}
+import { PasswordHasher, TokenService } from "./usecase-interfaces";
+import { Email } from "../../../domain/auth/value-objects/email.vo";
+import { Password } from "../../../domain/auth/value-objects/password.vo";
+import { Role } from "../../../domain/auth/value-objects/role.vo";
 
 export class RegisterUserUseCase {
   constructor(
@@ -25,33 +20,28 @@ export class RegisterUserUseCase {
   public async execute(data: RegisterUserDTO): Promise<AuthTokensDTO> {
     const { email, password, role } = data;
 
-    // Validar que todos los campos requeridos estén presentes
     if (!email || !password || !role) {
       throw new Error("Missing required fields");
     }
 
-    // Validar que el rol sea válido
-    const validRoles = ["admin", "user"];
-    if (!validRoles.includes(role)) {
-      throw new Error("Invalid role");
-    }
+    const emailVO = new Email(email);
+    const passwordVO = new Password(password);
+    const roleVO = new Role(role);
 
-    // Comprobar si el usuario ya existe
-    const exists = await this.userRepository.userExists(email);
+    const exists = await this.userRepository.userExists(emailVO.getValue());
     if (exists) {
       throw new UserAlreadyExistsError();
     }
 
-    // Hashear la contraseña y crear el usuario
-    const hashedPassword = await this.passwordHasher.hash(password);
-    const newUser = new User(email, hashedPassword, role as "admin" | "user");
+    const hashedPassword = await this.passwordHasher.hash(passwordVO.getValue());
+    const hashedPasswordVO = new Password(hashedPassword);
+
+    const newUser = new User(emailVO, hashedPasswordVO, roleVO);
     await this.userRepository.createUser(newUser);
 
-    // Generar los tokens de autenticación
-    const accessToken = this.tokenService.generateAccessToken(email);
-    const refreshToken = await this.tokenService.generateRefreshToken(email);
+    const accessToken = this.tokenService.generateAccessToken(emailVO.getValue());
+    const refreshToken = await this.tokenService.generateRefreshToken(emailVO.getValue());
 
-    // Devolver los tokens
     return { accessToken, refreshToken };
   }
 }

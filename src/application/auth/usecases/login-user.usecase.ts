@@ -3,10 +3,8 @@ import { TokenRepository } from "../../../domain/auth/interfaces/token.repositor
 import { LoginUserDTO } from "../dtos/user.dto";
 import { AuthTokensDTO } from "../dtos/token.dto";
 import { InvalidCredentialsError } from "../exceptions/invalid-credentials.exception";
-
-export interface PasswordComparer {
-  compare(plain: string, hashed: string): Promise<boolean>;
-}
+import { PasswordComparer } from "./usecase-interfaces";
+import { Email } from "../../../domain/auth/value-objects/email.vo";
 
 export class LoginUserUseCase {
   constructor(
@@ -23,34 +21,33 @@ export class LoginUserUseCase {
     const { email, password } = data;
 
     if (!email || !password) {
-      throw new Error("Missing required fields"); // Lanza un error genérico
-    }    
+      throw new Error("Missing required fields");
+    }
 
-    const user = await this.userRepository.getUserByEmail(email);
+    const emailVO = new Email(email);
+
+    const user = await this.userRepository.getUserByEmail(emailVO.getValue());
     if (!user) {
       throw new InvalidCredentialsError();
     }
 
-    const isValidPassword = await this.passwordComparer.compare(password, user.password);
+    const isValidPassword = await this.passwordComparer.compare(password, user.password.getValue());
     if (!isValidPassword) {
       throw new InvalidCredentialsError();
     }
 
-    // Verificar si ya existe un refresh token para este usuario
-    const existingToken = await this.tokenRepository.getTokenByEmail(email);
+    const existingToken = await this.tokenRepository.getTokenByEmail(emailVO.getValue());
 
     if (existingToken) {
-      const accessToken = this.tokenService.generateAccessToken(email);
+      const accessToken = this.tokenService.generateAccessToken(emailVO.getValue());
       return {
         accessToken,
-        refreshToken: existingToken.refreshToken, // Retornar el token existente
+        refreshToken: existingToken.refreshToken,
       };
     }
 
-    // Si no existe un refresh token, generamos uno nuevo
-    const refreshToken = await this.tokenService.generateRefreshToken(email);
-    const accessToken = this.tokenService.generateAccessToken(email);
-
+    const refreshToken = await this.tokenService.generateRefreshToken(emailVO.getValue());
+    const accessToken = this.tokenService.generateAccessToken(emailVO.getValue());
     return { accessToken, refreshToken };
   }
 }

@@ -1,22 +1,24 @@
 // domain/auth/entities/user.entity.ts
-export type Role = "admin" | "user";
+import { Role } from "../value-objects/role.vo";
+import { Email } from "../value-objects/email.vo";
+import { Password } from "../value-objects/password.vo";
 
 export class User {
-  private _email: string;
-  private _password: string;
+  private _email: Email;
+  private _password: Password;
   private _role: Role;
 
-  constructor(email: string, password: string, role: Role) {
+  constructor(email: Email, password: Password, role: Role) {
     this._email = email;
     this._password = password;
     this._role = role;
   }
 
-  get email(): string {
+  get email(): Email {
     return this._email;
   }
 
-  get password(): string {
+  get password(): Password {
     return this._password;
   }
 

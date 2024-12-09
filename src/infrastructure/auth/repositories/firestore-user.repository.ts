@@ -13,7 +13,10 @@ export class FirestoreUserRepository implements UserRepository {
   }
 
   async createUser(user: User): Promise<void> {
-    const { email, password, role } = user;
+    const email = user.email.getValue(); // Obtener el string del VO Email
+    const password = user.password.getValue(); // Obtener el string del VO Password
+    const role = user.role.getValue(); // Obtener el string del VO Role
+
     await this.userCollection.doc(email).set({ email, password, role });
   }
 
@@ -21,8 +24,14 @@ export class FirestoreUserRepository implements UserRepository {
     const userRef = this.userCollection.doc(email);
     const snapshot = await userRef.get();
     if (!snapshot.exists) return null;
+
     const data = snapshot.data();
     if (!data) return null;
-    return new User(data.email, data.password, data.role);
+
+    return new User(
+      new (require("../../../domain/auth/value-objects/email.vo").Email)(data.email),
+      new (require("../../../domain/auth/value-objects/password.vo").Password)(data.password),
+      new (require("../../../domain/auth/value-objects/role.vo").Role)(data.role)
+    );
   }
 }

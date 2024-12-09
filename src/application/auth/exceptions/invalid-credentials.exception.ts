@@ -1,8 +1,10 @@
-// application/auth/exceptions/invalid-credentials.exception.ts
-export class InvalidCredentialsError extends Error {
-    constructor() {
-      super("Invalid credentials");
-      this.name = "InvalidCredentialsError";
-    }
-  }
+import { BaseApplicationError } from "./base-application-error";
+
+export class InvalidCredentialsError extends BaseApplicationError {
+  public statusCode = 401;
   
+  constructor() {
+    super("Invalid credentials");
+    this.name = "InvalidCredentialsError";
+  }
+}

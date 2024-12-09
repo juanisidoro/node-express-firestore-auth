@@ -7,19 +7,24 @@ export class FirestoreTokenRepository implements TokenRepository {
   private tokenCollection = db.collection("tokens");
 
   async saveToken(token: Token): Promise<void> {
-    await this.tokenCollection.doc(token.email).set({
-      email: token.email,
-      refreshToken: token.refreshToken
-    });
+    const email = token.email.getValue(); // Convertir VO Email a string
+    const refreshToken = token.refreshToken;
+
+    await this.tokenCollection.doc(email).set({ email, refreshToken });
   }
 
   async getTokenByEmail(email: string): Promise<Token | null> {
     const tokenRef = this.tokenCollection.doc(email);
     const snapshot = await tokenRef.get();
     if (!snapshot.exists) return null;
+
     const data = snapshot.data();
     if (!data) return null;
-    return new Token(data.email, data.refreshToken);
+
+    return new Token(
+      new (require("../../../domain/auth/value-objects/email.vo").Email)(data.email),
+      data.refreshToken
+    );
   }
 
   async deleteToken(email: string): Promise<void> {
