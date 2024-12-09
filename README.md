@@ -5,7 +5,7 @@ Este branch introduce la funcionalidad de **Gestión de Usuarios** utilizando pr
 
 ---
 
-## Nuevos Archivos Agregadoss
+## Nuevos Archivos Agregados
 
 En comparación con la Fase 2, se han añadido los siguientes archivos:
 
