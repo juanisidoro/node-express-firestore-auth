@@ -1,25 +1,73 @@
-# 🚀 Node.js Express Firestore Auth 🔐
+# Fase 2 - Autenticación y Autorización (DDD)
 
-¡¡Bienvenido al proyecto **Node.js Express Firestore Auth**!! Este repositorio contiene una plantilla para implementar un sistema de autenticación utilizando **Node.js**, **Express**, y **Firestore**. Ideal para iniciar rápidamente proyectos con autenticación segura y eficiente. 🌟
+Implementación de autenticación y autorización siguiendo principios de **DDD (Domain-Driven Design)** y **Clean Architecture**. Esta fase incluye registro, inicio de sesión y manejo de tokens.
 
----
+## Funcionalidades Implementadas
 
-## 📝 **Descripción**
-Este proyecto tiene como objetivo ofrecer una base sólida para gestionar la autenticación de usuarios con las siguientes funcionalidades:
-- 🛡️ **Autenticación segura**: Registro, inicio de sesión y manejo de tokens.
-- 🔥 **Firestore**: Base de datos en la nube para almacenar usuarios y sus datos de forma eficiente.
-- 🚀 **Express**: Framework rápido y minimalista para manejar rutas y lógica del backend.
+1. **Registro de Usuarios (`/auth/register`):** Registro de usuarios con validación de email único, contraseña segura y rol.
+2. **Inicio de Sesión (`/auth/login`):** Autenticación de usuarios con generación de tokens.
+3. **Renovación de Token (`/auth/refresh-token`):** Generación de un nuevo `accessToken` a partir de un `refreshToken`.
 
----
+## Estructura Básica de Archivos
 
-## 🛠️ **Tecnologías usadas**
-Este proyecto está construido con las siguientes tecnologías:
-- **Node.js** 🟢: Entorno de ejecución para JavaScript.
-- **Express** ⚡: Framework para backend.
-- **Firebase Firestore** 🔥: Base de datos NoSQL.
-- **JSON Web Tokens (JWT)** 🔑: Para la autenticación basada en tokens.
+### Dominio
+- Entidades: `user.entity.ts`, `token.entity.ts`.
+- Value Objects: `email.vo.ts`, `password.vo.ts`, `role.vo.ts`.
+- Repositorios: `user.repository.ts`, `token.repository.ts`.
 
----
+### Aplicación
+- Casos de Uso: `register-user.usecase.ts`, `login-user.usecase.ts`, `refresh-token.usecase.ts`.
+- DTOs: `user.dto.ts`, `token.dto.ts`.
+- Excepciones: `invalid-credentials.exception.ts`, `user-already-exists.exception.ts`.
 
-📜 Licencia
-Este proyecto está bajo la licencia MIT. Puedes usarlo, modificarlo y distribuirlo como prefieras.
+### Infraestructura
+- Repositorios: `firestore-user.repository.ts`, `firestore-token.repository.ts`.
+- Servicios: `jwt-token.service.ts`, `password-hasher.service.ts`.
+- Controladores: `register.controller.ts`, `login.controller.ts`, `refresh-token.controller.ts`.
+- Rutas: `auth.routes.ts`.
+
+
+
+## Endpoints
+
+### POST /auth/register
+
+Registra un nuevo usuario.
+
+    {
+      "email": "user@example.com",
+      "password": "password123",
+      "role": "user"
+    }
+
+### POST /auth/login
+
+Inicia sesión con email y contraseña.
+
+    {
+      "email": "user@example.com",
+      "password": "password123"
+    }
+
+### POST /auth/refresh-token
+
+Renueva el token de acceso utilizando un refreshToken válido.
+
+    {
+      "refreshToken": "<your_refresh_token>"
+    }
+
+Consideraciones Técnicas
+------------------------
+
+*   **Validaciones:** Email válido y único, contraseñas con al menos 6 caracteres, roles válidos (`admin`, `user`).
+*   **Tokens:** `accessToken` válido por 15 minutos, `refreshToken` válido por 7 días.
+*   **Errores Comunes:**
+    *   `401 Unauthorized:` Credenciales inválidas o token no válido.
+    *   `409 Conflict:` Usuario ya existe.
+
+Próximos Pasos
+--------------
+
+*   **Fase 3:** Gestión de usuarios (CRUD).
+*   **Seguridad:** Monitoreo de intentos fallidos y rotación de tokens.
