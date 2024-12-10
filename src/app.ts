@@ -1,15 +1,15 @@
 import express from "express";
 import cors from "cors";
-import authRoutes from "./auth/routes/authRoutes";
+import authRoutes from "./interfaces/routes/authRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 
 // Crear la aplicación Express
 const app = express();
 
 // Middlewares
-app.use(express.json()); // Procesar JSON
-app.use(express.urlencoded({ extended: true })); // Procesar datos de formularios
-app.use(cors()); // Habilitar CORS para manejar solicitudes entre dominios
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 // Rutas
 app.get("/health", (req, res) => {
@@ -17,8 +17,7 @@ app.get("/health", (req, res) => {
 });
 app.use("/auth", authRoutes);
 
-// Middleware de manejo de errores (colócalo al final)
+// Middleware de manejo de errores
 app.use(errorHandler);
 
-// Exportar la app configurada
 export default app;

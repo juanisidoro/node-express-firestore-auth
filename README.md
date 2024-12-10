@@ -1,86 +1,112 @@
-# Fase 2: Sistema de Autenticación
+# Clean Architecture Migration
 
-**Objetivo**:  
-Implementar un sistema de autenticación utilizando Firestore y JSON Web Tokens (JWT), que permita registrar usuarios, iniciar sesión y renovar tokens.
+Este proyecto muestra cómo evolucionamos desde una estructura básica hacia una arquitectura basada en principios de **Clean Architecture** y **Hexagonal Architecture**, lo que mejora la organización, escalabilidad y mantenibilidad del código.
+
+## Estructura Anterior
+
+La estructura inicial del proyecto era la siguiente:
+
+### Estructura Anterior
+
+```
+src
+├── app.ts
+├── auth
+│   ├── controllers
+│   │   ├── loginController.ts
+│   │   ├── refreshTokenController.ts
+│   │   └── registerController.ts
+│   ├── routes
+│   │   └── authRoutes.ts
+│   ├── services
+│   │   ├── tokenService.ts
+│   │   └── userService.ts
+├── config
+│   └── firestore.ts
+├── middleware
+│   └── errorHandler.ts
+├── server.ts
+├── types
+│   ├── tokenTypes.ts
+│   └── userTypes.ts
+```
+
+### Problemas Detectados:
+1. **Acoplamiento:** Los servicios, controladores y configuraciones estaban acoplados, dificultando la extensión o el cambio de tecnologías.
+2. **Escalabilidad:** Agregar nuevos casos de uso o entidades sería complicado debido a la falta de separación clara entre responsabilidades.
+3. **Pruebas:** La falta de interfaces o separación dificultaba las pruebas unitarias y los mocks.
 
 ---
 
-## Características Implementadas
+## Nueva Estructura
 
-1. **Registro de usuarios (`POST /auth/register`)**:
-   - Permite registrar nuevos usuarios almacenando credenciales cifradas en Firestore.
-   - Devuelve un Access Token y un Refresh Token.
-2. **Inicio de sesión (`POST /auth/login`)**:
-   - Valida las credenciales del usuario.
-   - Devuelve un Access Token y un Refresh Token.
-3. **Renovación de tokens (`POST /auth/refresh-token`)**:
-   - Permite obtener un nuevo Access Token utilizando un Refresh Token válido.
+Implementamos una nueva arquitectura basada en **Clean Architecture**, reorganizando el proyecto en capas bien definidas:
+
+```
+src
+├── application
+│   ├── usecases
+│   │   ├── authenticateUser.ts
+│   │   ├── createUser.ts
+│   │   ├── generateTokens.ts
+│   │   └── refreshToken.ts
+│   └── services
+│       ├── tokenService.ts
+│       └── userService.ts
+├── domain
+│   ├── entities
+│   │   ├── token.ts
+│   │   └── user.ts
+│   ├── repositories
+│   │   ├── tokenRepository.ts
+│   │   └── userRepository.ts
+│   └── types
+│       ├── tokenTypes.ts
+│       └── userTypes.ts
+├── infrastructure
+│   ├── db
+│   │   └── firestore.ts
+│   ├── repositories
+│   │   ├── firestoreTokenRepository.ts
+│   │   └── firestoreUserRepository.ts
+│   └── env
+│       └── dotenvConfig.ts
+├── interfaces
+│   ├── controllers
+│   │   ├── auth
+│   │   │   ├── loginController.ts
+│   │   │   ├── refreshTokenController.ts
+│   │   │   └── registerController.ts
+│   └── routes
+│       └── authRoutes.ts
+├── middleware
+│   └── errorHandler.ts
+├── app.ts
+├── server.ts
+
+```
+
 
 ---
 
-## Pasos Realizados
+## Beneficios de la Nueva Arquitectura
 
-1. **Crear la estructura de archivos para autenticación**:
-   - Carpetas: `auth/controllers/`, `auth/services/`, `auth/routes/`.
-2. **Configurar Firestore para almacenar usuarios**:
-   - La colección `users` almacena el correo electrónico y la contraseña cifrada.
-3. **Implementar controladores para cada funcionalidad**:
-   - Registro, inicio de sesión y renovación de tokens.
-4. **Agregar rutas de autenticación en el servidor**:
-   - Prefijo `/auth` para las rutas relacionadas con la autenticación.
+1. **Separación de Responsabilidades:**
+   - Cada capa tiene una responsabilidad clara:
+     - `domain`: Define las reglas de negocio y entidades.
+     - `application`: Orquesta los casos de uso y lógica de aplicación.
+     - `infrastructure`: Implementa dependencias externas (bases de datos, configuraciones).
+     - `interfaces`: Expone adaptadores como controladores y rutas HTTP.
+
+2. **Escalabilidad:**
+   - Es fácil agregar nuevas funcionalidades sin afectar las capas existentes.
+   - Las dependencias entre capas están controladas.
+
+3. **Facilidad de Pruebas:**
+   - Los repositorios y servicios están definidos como interfaces, facilitando la creación de mocks.
+   - Cada capa se puede probar de manera aislada.
+
+4. **Mantenibilidad:**
+   - El código está organizado de forma modular y clara, reduciendo la complejidad al navegar entre archivos.
 
 ---
-
-## Cómo Usar esta Fase
-
-### 1. Instalar Dependencias
-Ejecuta:
-
-```bash
-npm install bcrypt jsonwebtoken && npm install -D @types/bcrypt
-```
-
-### 2. Probar el Registro de Usuarios
-Realiza una solicitud POST a:
-```bash
-http://localhost:3000/auth/register
-```
-
-Con el siguiente cuerpo JSON:
-```bash
-{
-  "email": "test@example.com",
-  "password": "password123"
-}
-```
-
-### 3. Probar el Inicio de Sesión
-Realiza una solicitud POST a:
-```bash
-http://localhost:3000/auth/login
-```
-
-```bash
-{
-  "email": "test@example.com",
-  "password": "password123"
-}
-```
-
-### 4. Probar la Renovación de Tokens
-Realiza una solicitud POST a:
-
-```bash
-http://localhost:3000/auth/refresh-token
-```
-Con el siguiente cuerpo JSON:
-```bash
-{
-  "refreshToken": "<your-refresh-token>"
-}
-```
-
-> [!NOTE] 
-> Este archivo README.md está diseñado únicamente para la rama fase-2-autenticacion.
->
-> 💡 Consejo: Asegúrate de probar las funcionalidades de autenticación antes de fusionar esta rama con develop.
