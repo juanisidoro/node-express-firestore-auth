@@ -8,3 +8,4 @@ export class RefreshToken {
     return this.tokenService.generateAccessToken(email);
   }
 }
+

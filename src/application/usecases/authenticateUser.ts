@@ -15,6 +15,7 @@ export class AuthenticateUser {
 
     const accessToken = this.tokenService.generateAccessToken(email);
     const refreshToken = await this.tokenService.generateRefreshToken(email);
+
     return { accessToken, refreshToken };
   }
 }

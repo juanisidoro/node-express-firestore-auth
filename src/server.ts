@@ -1,23 +1,7 @@
-import express from "express";
-import cors from "cors";
-import authRoutes from "./interfaces/routes/authRoutes";
-import { errorHandler } from "./middleware/errorHandler";
+import app from "./app";
 
-// Crear la aplicación Express
-const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors());
-
-// Rutas
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "OK", message: "Server is running" });
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
-app.use("/auth", authRoutes);
-
-// Middleware de manejo de errores
-app.use(errorHandler);
-
-export default app;
