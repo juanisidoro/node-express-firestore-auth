@@ -5,12 +5,12 @@ import db from "../db/firestore";
 export class FirestoreTokenRepository implements TokenRepository {
   async saveToken(email: string, refreshToken: string, expiresIn: number): Promise<void> {
     const expirationDate = new Date();
-    expirationDate.setSeconds(expirationDate.getSeconds() + expiresIn); // Expira en `expiresIn` segundos
+    expirationDate.setSeconds(expirationDate.getSeconds() + expiresIn);
 
     await db.collection("tokens").doc(email).set({
       email,
       refreshToken,
-      expiresAt: expirationDate.toISOString(), // Guardar la fecha de expiración
+      expiresAt: expirationDate.toISOString(),
     });
   }
 
@@ -25,4 +25,5 @@ export class FirestoreTokenRepository implements TokenRepository {
     await db.collection("tokens").doc(email).delete();
   }
 }
+
 
