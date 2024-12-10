@@ -103,27 +103,3 @@ Notas Técnicas
     *   Los usuarios se almacenan en Firestore.
     *   Los documentos de usuarios utilizan el `id` generado automáticamente por Firestore.
 
-Ejecución de la API
--------------------
-
-1.  **Instalar dependencias:**
-
-npm install
-
-3.  **Configurar variables de entorno:**
-
-Crea un archivo `.env` con las siguientes claves:
-
-            ACCESS\_TOKEN\_SECRET=your\_access\_token\_secret
-            REFRESH\_TOKEN\_SECRET=your\_refresh\_token\_secret
-            FIREBASE\_CREDENTIALS=path\_to\_firebase\_credentials.json
-        
-
-6.  **Iniciar el servidor:**
-
-npm start
-
-Pruebas
--------
-
-Realiza solicitudes a los endpoints utilizando herramientas como Postman o cURL.
