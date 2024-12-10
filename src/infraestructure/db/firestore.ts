@@ -1,25 +1,41 @@
-// src/infraestructure/db/firestore.ts
-
 import admin from "firebase-admin";
 import * as dotenv from "dotenv";
 import path from "path";
+import fs from "fs";
 
 dotenv.config();
 
-// Ruta del archivo de credenciales desde el archivo .env
-const serviceAccountPath = process.env.FIREBASE_CREDENTIALS;
+// Detectar si las credenciales son un archivo o un JSON string
+const firebaseCredentialsPathOrJSON = process.env.FIREBASE_CREDENTIALS;
 
-if (!serviceAccountPath) {
+if (!firebaseCredentialsPathOrJSON) {
   throw new Error(
-    "La ruta de las credenciales de Firebase no está definida en el archivo .env"
+    "Firebase credentials are not defined in the environment variables."
   );
 }
 
-// Resuelve la ruta absoluta desde la ruta relativa proporcionada
-const absolutePath = path.resolve(serviceAccountPath);
+let firebaseCredentials;
 
+if (fs.existsSync(firebaseCredentialsPathOrJSON)) {
+  // Si es un archivo, cargarlo
+  const absolutePath = path.resolve(firebaseCredentialsPathOrJSON);
+  firebaseCredentials = require(absolutePath);
+  console.log("Using Firebase credentials from local file:", absolutePath);
+} else {
+  try {
+    // Intentar parsear como JSON string
+    firebaseCredentials = JSON.parse(firebaseCredentialsPathOrJSON);
+    console.log("Using Firebase credentials from environment variable.");
+  } catch (error) {
+    throw new Error(
+      "Invalid FIREBASE_CREDENTIALS format. It must be a valid file path or JSON string."
+    );
+  }
+}
+
+// Inicializar Firebase Admin SDK
 admin.initializeApp({
-  credential: admin.credential.cert(require(absolutePath)),
+  credential: admin.credential.cert(firebaseCredentials),
 });
 
 const db = admin.firestore();
