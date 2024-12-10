@@ -1,3 +1,5 @@
+// src/infraestructure/db/firestore.ts
+
 import admin from "firebase-admin";
 import * as dotenv from "dotenv";
 import path from "path";
@@ -8,7 +10,9 @@ dotenv.config();
 const serviceAccountPath = process.env.FIREBASE_CREDENTIALS;
 
 if (!serviceAccountPath) {
-  throw new Error("La ruta de las credenciales de Firebase no está definida en el archivo .env");
+  throw new Error(
+    "La ruta de las credenciales de Firebase no está definida en el archivo .env"
+  );
 }
 
 // Resuelve la ruta absoluta desde la ruta relativa proporcionada

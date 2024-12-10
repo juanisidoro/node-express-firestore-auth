@@ -1,3 +1,5 @@
+// src/application/usecases/refreshToken.ts
+
 import { TokenService } from "../services/tokenService";
 import { UserRepository } from "../../domain/repositories/userRepository";
 
@@ -21,4 +23,3 @@ export class RefreshToken {
     return this.tokenService.generateAccessToken(email, user.role);
   }
 }
-

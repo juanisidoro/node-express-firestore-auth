@@ -9,13 +9,26 @@ export class AuthenticateUser {
 
   async execute(email: string, password: string) {
     const user = await this.userRepository.getUserByEmail(email);
-    if (!user || !(await this.userRepository.verifyPassword(password, user.password))) {
+
+    if (!user) {
       throw new Error("Invalid credentials");
     }
 
-    const accessToken = this.tokenService.generateAccessToken(email,user.role);
+    const isPasswordValid = await this.userRepository.verifyPassword(
+      password,
+      user.password
+    );
+
+    if (!isPasswordValid) {
+      throw new Error("Invalid credentials");
+    }
+
+    const accessToken = this.tokenService.generateAccessToken(
+      email,
+      user.role
+    );
     const refreshToken = await this.tokenService.generateRefreshToken(email);
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, userId: user.id };
   }
 }

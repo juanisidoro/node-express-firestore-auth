@@ -1,3 +1,5 @@
+// src/interfaces/controllers/user/getUserController.ts
+
 import { Request, Response, NextFunction } from "express";
 import { FirestoreUserRepository } from "../../../infraestructure/repositories/firestoreUserRepository";
 import { GetUser } from "../../../application/usecases/getUser";
@@ -5,7 +7,11 @@ import { GetUser } from "../../../application/usecases/getUser";
 const userRepository = new FirestoreUserRepository();
 const getUser = new GetUser(userRepository);
 
-export const getUserController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getUserController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -24,10 +30,18 @@ export const getUserController = async (req: Request, res: Response, next: NextF
     }
 
     res.status(200).json({
+      id: user.id,
+      username: user.username,
+      first_name: user.first_name,
+      last_name: user.last_name,
       email: user.email,
       role: user.role,
+      created_at: user.created_at,
+      last_login: user.last_login,
+      url: user.url,
+      stores: user.stores,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in getUserController:", error);
     next(error);
   }

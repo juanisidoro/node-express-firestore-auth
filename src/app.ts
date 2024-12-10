@@ -3,6 +3,8 @@ import cors from "cors";
 import authRoutes from "./interfaces/routes/authRoutes";
 import userRoutes from "./interfaces/routes/userRoutes";
 import { errorHandler } from "./middleware/errorHandler";
+import initAdmin from "./infraestructure/initAdmin";
+
 
 // Crear la aplicación Express
 const app = express();
@@ -21,5 +23,8 @@ app.use("/users", userRoutes);
 
 // Middleware de manejo de errores
 app.use(errorHandler);
+
+// Inicializar Admin al iniciar la aplicación
+initAdmin();
 
 export default app;

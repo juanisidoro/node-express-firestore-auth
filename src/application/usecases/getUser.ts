@@ -1,3 +1,5 @@
+// src/application/usecases/getUser.ts
+
 import { UserRepository } from "../../domain/repositories/userRepository";
 import { User } from "../../domain/entities/user";
 

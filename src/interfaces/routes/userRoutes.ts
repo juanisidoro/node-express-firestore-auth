@@ -1,3 +1,5 @@
+// src/interfaces/routes/userRoutes.ts
+
 import express from "express";
 import { getUserController } from "../controllers/user/getUserController";
 import { updateUserController } from "../controllers/user/updateUserController";
@@ -6,14 +8,12 @@ import { registerController } from "../controllers/auth/registerController";
 import { authMiddleware, adminOnlyMiddleware, selfOrAdminMiddleware } from "../../middleware/authMiddleware";
 import { getAllUsersController } from "../controllers/user/getAllUsersController";
 
-
 const router = express.Router();
 
-//Obtener todos los usuariois
-router.get("/", authMiddleware, getAllUsersController); // Ruta protegida por authMiddleware
+// Obtener todos los usuarios (solo admin)
+router.get("/", authMiddleware, adminOnlyMiddleware, getAllUsersController);
 
-
-// Crear usuario (accesible para admins)
+// Crear usuario (solo admin)
 router.post("/", authMiddleware, adminOnlyMiddleware, registerController);
 
 // Obtener información del usuario
