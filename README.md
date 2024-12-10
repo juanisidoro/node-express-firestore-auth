@@ -1,112 +1,129 @@
-# Clean Architecture Migration
+  Users API Documentation
 
-Este proyecto muestra cómo evolucionamos desde una estructura básica hacia una arquitectura basada en principios de **Clean Architecture** y **Hexagonal Architecture**, lo que mejora la organización, escalabilidad y mantenibilidad del código.
+Users API
+=========
 
-## Estructura Anterior
+Este proyecto incluye un endpoint básico para manejar usuarios, diseñado con buenas prácticas como **Clean Code**, **Arquitectura Hexagonal**, y **Domain-Driven Design (DDD)**.
 
-La estructura inicial del proyecto era la siguiente:
+Endpoints de Usuarios
+---------------------
 
-### Estructura Anterior
+### 1\. Crear Usuario (POST /users)
 
-```
-src
-├── app.ts
-├── auth
-│   ├── controllers
-│   │   ├── loginController.ts
-│   │   ├── refreshTokenController.ts
-│   │   └── registerController.ts
-│   ├── routes
-│   │   └── authRoutes.ts
-│   ├── services
-│   │   ├── tokenService.ts
-│   │   └── userService.ts
-├── config
-│   └── firestore.ts
-├── middleware
-│   └── errorHandler.ts
-├── server.ts
-├── types
-│   ├── tokenTypes.ts
-│   └── userTypes.ts
-```
+**Descripción:** Permite crear un nuevo usuario.
 
-### Problemas Detectados:
-1. **Acoplamiento:** Los servicios, controladores y configuraciones estaban acoplados, dificultando la extensión o el cambio de tecnologías.
-2. **Escalabilidad:** Agregar nuevos casos de uso o entidades sería complicado debido a la falta de separación clara entre responsabilidades.
-3. **Pruebas:** La falta de interfaces o separación dificultaba las pruebas unitarias y los mocks.
+**Restricción:** Solo usuarios con rol `admin` pueden crear usuarios.
 
----
+**Body:**
 
-## Nueva Estructura
+        {
+            "email": "user@example.com",
+            "password": "password123",
+            "role": "user"
+        }
+    
 
-Implementamos una nueva arquitectura basada en **Clean Architecture**, reorganizando el proyecto en capas bien definidas:
+**Respuesta Exitosa:**
 
-```
-src
-├── application
-│   ├── usecases
-│   │   ├── authenticateUser.ts
-│   │   ├── createUser.ts
-│   │   ├── generateTokens.ts
-│   │   └── refreshToken.ts
-│   └── services
-│       ├── tokenService.ts
-│       └── userService.ts
-├── domain
-│   ├── entities
-│   │   ├── token.ts
-│   │   └── user.ts
-│   ├── repositories
-│   │   ├── tokenRepository.ts
-│   │   └── userRepository.ts
-│   └── types
-│       ├── tokenTypes.ts
-│       └── userTypes.ts
-├── infrastructure
-│   ├── db
-│   │   └── firestore.ts
-│   ├── repositories
-│   │   ├── firestoreTokenRepository.ts
-│   │   └── firestoreUserRepository.ts
-│   └── env
-│       └── dotenvConfig.ts
-├── interfaces
-│   ├── controllers
-│   │   ├── auth
-│   │   │   ├── loginController.ts
-│   │   │   ├── refreshTokenController.ts
-│   │   │   └── registerController.ts
-│   └── routes
-│       └── authRoutes.ts
-├── middleware
-│   └── errorHandler.ts
-├── app.ts
-├── server.ts
+        {
+            "id": "generated\_firestore\_id",
+            "accessToken": "generated\_access\_token",
+            "refreshToken": "generated\_refresh\_token"
+        }
+    
 
-```
+### 2\. Obtener Usuario (GET /users/:id)
 
+**Descripción:** Permite obtener información de un usuario específico.
 
----
+**Restricción:** Solo usuarios con rol `admin` o el propio usuario pueden acceder.
 
-## Beneficios de la Nueva Arquitectura
+**Respuesta Exitosa:**
 
-1. **Separación de Responsabilidades:**
-   - Cada capa tiene una responsabilidad clara:
-     - `domain`: Define las reglas de negocio y entidades.
-     - `application`: Orquesta los casos de uso y lógica de aplicación.
-     - `infrastructure`: Implementa dependencias externas (bases de datos, configuraciones).
-     - `interfaces`: Expone adaptadores como controladores y rutas HTTP.
+        {
+            "email": "user@example.com",
+            "role": "user"
+        }
+    
 
-2. **Escalabilidad:**
-   - Es fácil agregar nuevas funcionalidades sin afectar las capas existentes.
-   - Las dependencias entre capas están controladas.
+### 3\. Obtener Todos los Usuarios (GET /users)
 
-3. **Facilidad de Pruebas:**
-   - Los repositorios y servicios están definidos como interfaces, facilitando la creación de mocks.
-   - Cada capa se puede probar de manera aislada.
+**Descripción:** Permite obtener una lista de todos los usuarios.
 
-4. **Mantenibilidad:**
-   - El código está organizado de forma modular y clara, reduciendo la complejidad al navegar entre archivos.
+**Restricción:** Solo usuarios con rol `admin`.
 
----
+**Respuesta Exitosa:**
+
+        \[
+            {
+                "email": "user1@example.com",
+                "role": "user"
+            },
+            {
+                "email": "admin@example.com",
+                "role": "admin"
+            }
+        \]
+    
+
+### 4\. Actualizar Usuario (PUT /users/:id)
+
+**Descripción:** Permite actualizar los datos de un usuario.
+
+**Restricción:** Solo usuarios con rol `admin` o el propio usuario pueden realizar cambios.
+
+**Body:**
+
+        {
+            "role": "admin"
+        }
+    
+
+**Respuesta Exitosa:**
+
+Código HTTP `204 No Content`.
+
+### 5\. Eliminar Usuario (DELETE /users/:id)
+
+**Descripción:** Permite eliminar un usuario específico.
+
+**Restricción:** Solo usuarios con rol `admin`.
+
+**Respuesta Exitosa:**
+
+Código HTTP `204 No Content`.
+
+Notas Técnicas
+--------------
+
+*   **Autenticación:**
+    *   Todos los endpoints están protegidos con tokens JWT.
+    *   El acceso está controlado mediante middlewares que verifican el rol del usuario (`admin` o `user`).
+*   **Base de Datos:**
+    *   Los usuarios se almacenan en Firestore.
+    *   Los documentos de usuarios utilizan el `id` generado automáticamente por Firestore.
+
+Ejecución de la API
+-------------------
+
+1.  **Instalar dependencias:**
+
+npm install
+
+3.  **Configurar variables de entorno:**
+
+Crea un archivo `.env` con las siguientes claves:
+
+            ACCESS\_TOKEN\_SECRET=your\_access\_token\_secret
+            REFRESH\_TOKEN\_SECRET=your\_refresh\_token\_secret
+            FIREBASE\_CREDENTIALS=path\_to\_firebase\_credentials.json
+        
+
+6.  **Iniciar el servidor:**
+
+npm start
+
+Pruebas
+-------
+
+Realiza solicitudes a los endpoints utilizando herramientas como Postman o cURL.
