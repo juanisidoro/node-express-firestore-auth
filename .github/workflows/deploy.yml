@@ -3,7 +3,7 @@ name: Deploy to Vercel
 on:
   push:
     branches:
-      - fase-4-despliege
+      - fase-2-updateuser
 
 jobs:
   deploy:
