@@ -13,7 +13,7 @@ export class AuthenticateUser {
       throw new Error("Invalid credentials");
     }
 
-    const accessToken = this.tokenService.generateAccessToken(email);
+    const accessToken = this.tokenService.generateAccessToken(email,user.role);
     const refreshToken = await this.tokenService.generateRefreshToken(email);
 
     return { accessToken, refreshToken };

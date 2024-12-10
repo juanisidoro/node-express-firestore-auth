@@ -13,9 +13,10 @@ export class TokenService {
     this.tokenRepository = new FirestoreTokenRepository();
   }
 
-  generateAccessToken(email: string): string {
-    return jwt.sign({ email }, this.accessTokenSecret, { expiresIn: "15m" }); // Access token expira en 15 minutos
+  generateAccessToken(email: string, role: string): string {
+    return jwt.sign({ email, role }, this.accessTokenSecret, { expiresIn: "15m" }); // Incluye 'role'
   }
+  
 
   async generateRefreshToken(email: string): Promise<string> {
     const refreshToken = jwt.sign({ email }, this.refreshTokenSecret, { expiresIn: "7d" }); // Refresh token expira en 7 días
